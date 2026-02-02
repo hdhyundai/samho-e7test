@@ -479,7 +479,7 @@ var QUESTIONS_FULL = [
   {id:15,type:'R1',rev:false,kr:"나의 생각보다 회사의 규칙이 더 중요하다.",en:"Company rules are more important than my personal thoughts.",vn:"Quy định của công ty quan trọng hơn suy nghĩ cá nhân của tôi.",ind:"Peraturan perusahaan lebih penting daripada pemikiran pribadi saya."},
   {id:16,type:'R1',rev:true,kr:"급하면 안전 규칙을 지키지 않아도 된다고 생각한다.",en:"I think safety rules can be skipped if I am in a hurry.",vn:"Tôi nghĩ nếu gấp thì không cần tuân thủ quy tắc an toàn.",ind:"Saya pikir jika terburu-buru, aturan keselamatan boleh tidak diikuti."},
   {id:17,type:'R1',rev:false,kr:"일하는 중에는 내 자리를 비우지 않으려 한다.",en:"I try not to leave my designated spot while working.",vn:"Tôi cố gắng không rời khỏi vị trí khi đang làm việc.",ind:"Saya berusaha tidak meninggalkan tempat saya saat bekerja."},
-  {id:18,type:'R1',rev:false,kr:"들어가지 말라는 곳은 이유를 몰라도 절대 들어가지 않는다.",en:"I never enter restricted areas even if I don't know the reason.",vn:"Tôi tuyệt đối không vào khu vực cấm dù không biết lý do.",ind:"Saya tidak pernah masuk ke area terlarang meskipun saya tidak tahu alasannya."},
+  {id:18,type:'R1',rev:false,kr:"들어가지 말라는 곳은 이유를 몰라도 절대 들어가지 않는다.",en:"I never enter restricted areas even if I don't know the reason.",vn:"Tôi tuyệt đối không vào khu vực cấm dù không biết lý do.",ind:"Saya không pernah masuk ke area terlarang meskipun saya tidak tahu alasannya."},
   {id:19,type:'R1',rev:false,kr:"관리자가 없어도 규칙을 잘 지킨다.",en:"I follow rules well even without a manager watching.",vn:"Tôi tuân thủ quy tắc ngay cả khi không có quản lý.",ind:"Saya mematuhi aturan dengan baik meskipun tidak ada manajer."},
   {id:20,type:'R1',rev:false,kr:"일이 복잡해도 정해진 순서대로 한다.",en:"Even if the work is complex, I follow the set order.",vn:"Dù công việc phức tạp, tôi vẫn làm theo trình tự quy định.",ind:"Meskipun pekerjaannya rumit, saya mengikuti urutan yang ditetapkan."},
   {id:21,type:'R1',rev:true,kr:"다른 사람이 규칙을 어기면, 나도 따라서 어기고 싶어진다.",en:"If others break the rules, I feel like breaking them too.",vn:"Nếu người khác vi phạm quy tắc, tôi cũng muốn làm theo.",ind:"Jika orang lain melanggar aturan, saya juga ingin ikut melanggarnya."},
@@ -488,7 +488,7 @@ var QUESTIONS_FULL = [
   {id:24,type:'R2',rev:false,kr:"거짓말로 작업 기록을 꾸며 달라는 부탁은 거절한다.",en:"I refuse requests to falsify documents.",vn:"Tôi từ chối yêu cầu làm giả tài liệu.",ind:"Saya menolak permintaan untuk memalsukan dokumen."},
   {id:25,type:'R2',rev:true,kr:"친한 동료가 잘못하면 모른 척 넘어갈 때가 있다.",en:"If a close colleague does wrong, I sometimes pretend not to know.",vn:"Nếu đồng nghiệp thân thiết làm sai, đôi khi tôi giả vờ không biết.",ind:"Jika rekan dekat berbuat salah, terkadang saya pura-pura tidak tahu."},
   {id:26,type:'R2',rev:false,kr:"내가 잘못했을 때는 인정하고 사과한다.",en:"When I do wrong, I admit it and apologize.",vn:"Khi tôi làm sai, tôi thừa nhận và xin lỗi.",ind:"Ketika saya salah, saya mengakuinya dan meminta maaf."},
-  {id:27,type:'R2',rev:false,kr:"다른 사람이 한 일을 내가 했다고 하지 않는다.",en:"I do not claim credit for what others have done.",vn:"Tôi không nhận công lao về việc người khác đã làm.",ind:"Saya tidak mengklaim pekerjaan orang lain sebagai pekerjaan saya."},
+  {id:27,type:'R2',rev:false,kr:"다른 사람이 한 일을 내가 했다고 하지 않는다.",en:"I do not claim credit for what others have done.",vn:"Tôi không nhận công lao về việc người khác đã làm.",ind:"Saya không nhận công lao về việc người khác đã làm."},
   {id:28,type:'R2',rev:true,kr:"결과가 좋으면 과정은 보고하지 않아도 된다고 생각한다.",en:"I think if the result is good, the process doesn't need reporting.",vn:"Tôi nghĩ nếu kết quả tốt thì không cần báo cáo quá trình.",ind:"Saya pikir jika hasilnya bagus, prosesnya tidak perlu dilaporkan."},
   {id:29,type:'T1',rev:false,kr:"동료가 힘들어 보이면 내가 먼저 도와준다.",en:"If a colleague looks tired, I help them first.",vn:"Nếu đồng nghiệp có vẻ vất vả, tôi sẽ giúp đỡ trước.",ind:"Jika rekan kerja terlihat kesulitan, saya akan membantunya terlebih dahulu."},
   {id:30,type:'T1',rev:false,kr:"새로운 직원이 오면 먼저 다가가서 일을 알려준다.",en:"When a new employee comes, I approach them first to teach the work.",vn:"Khi có nhân viên mới, tôi chủ động đến hướng dẫn công việc.",ind:"Saat ada karyawan baru, saya mendekatinya dulu untuk mengajari pekerjaan."},
@@ -958,7 +958,286 @@ window.showReport = function(d) {
     
     window.updateReportScale();
 };
-window.printReportContent=function(){const cvs=document.getElementById('mainChart');const url=cvs?cvs.toDataURL("image/png"):'';const cts=document.getElementById('report-content-wrapper').innerHTML;const w=window.open('','_blank','width=1100,height=1010');if(!w)return window.showModal('팝업 차단을 해제해주세요.');w.document.write(`<html><head><title>인성검사 리포트</title><script src="https://cdn.tailwindcss.com/3.4.1"><\/script><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet"><style>@page{size:A4 portrait;margin:10mm}body{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:'Noto Sans KR',sans-serif;background:white}.a4-page{width:210mm;min-height:297mm;padding:10mm 15mm;margin:0 auto;page-break-after:always;box-sizing:border-box;display:flex;flex-direction:column}.a4-page:last-child{page-break-after:auto}.executive-cover{background:linear-gradient(135deg,#002c5f 0%,#001a38 100%)!important;color:white!important;-webkit-print-color-adjust:exact}.report-header{border-bottom:3px solid #002c5f;padding-bottom:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}.executive-section{margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #e2e8f0}.executive-summary-box{background:#f1f5f9!important;border-left:5px solid #002c5f!important;padding:15px 20px;border-radius:8px;font-size:1rem;line-height:1.7;color:#334155;text-align:justify;margin-bottom:20px;font-weight:500}.score-card{background:#f8fafc!important;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center}.score-card.highlight-card{background-color:#002c5f!important;border-color:#002c5f!important;color:white!important}.score-card.highlight-card .label{color:#bfdbfe!important}.score-card.highlight-card .value{color:#ffffff!important}.label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;font-weight:700;margin-bottom:4px}.value{font-size:1.6rem;font-weight:900;color:#002c5f;line-height:1.2;font-family:'Noto Sans KR',sans-serif;word-break:keep-all}.section-title{font-size:1.2rem;font-weight:900;color:#002c5f;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}.chart-wrapper{position:relative;width:100%}canvas{display:none!important}.printed-chart-img{width:100%;height:100%;object-fit:contain;display:block}.grade-badge{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-weight:900;font-size:0.8rem;color:white;font-family:'Roboto',sans-serif}.grade-S{background-color:#4f46e5!important}.grade-A{background-color:#3b82f6!important}.grade-B{background-color:#10b981!important}.grade-C{background-color:#f59e0b!important}.grade-D{background-color:#ef4444!important}.text-blue-600{color:#2563eb!important}.text-orange-500{color:#f97316!important}.text-red-500{color:#ef4444!important}.no-print{display:none!important}table{width:100%;border-collapse:collapse}th,td{padding:4px 8px;border-bottom:1px solid #e2e8f0}thead th{background-color:#f8fafc!important;border-bottom:2px solid #e2e8f0}/* Executive Table Print Styles */.exec-table{width:100%;border-collapse:collapse;font-size:10px}.exec-table th{background-color:#f1f5f9!important;color:#475569!important;font-weight:800;text-align:center;padding:4px;border:1px solid #cbd5e1}.exec-table td{border:1px solid #e2e8f0;padding:4px;vertical-align:middle;color:#334155;word-break:keep-all}.exec-table tr:nth-child(even){background-color:#f8fafc!important}</style></head><body>${cts}<script>const w=document.querySelector('.chart-wrapper');if(w&&'${url}'){const i=document.createElement('img');i.src='${url}';i.className='printed-chart-img';w.appendChild(i);const c=w.querySelector('canvas');if(c)c.remove()}setTimeout(()=>{window.print();window.close()},800);<\/script></body></html>`);w.document.close()};
-window.printExecutiveReport=function(){const gCvs=document.getElementById('execGradeChart');const fCvs=document.getElementById('execFactorChart');const gUrl=gCvs?gCvs.toDataURL("image/png"):'';const fUrl=fCvs?fCvs.toDataURL("image/png"):'';const content=document.getElementById('report-content-wrapper').innerHTML;const w=window.open('','_blank','width=1100,height=1010');if(!w)return window.showModal("팝업 차단을 해제해주세요.");w.document.write(`<html><head><title>인성검사 총괄 보고서</title><script src="https://cdn.tailwindcss.com/3.4.1"><\/script><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet"><style>@page{size:A4 portrait;margin:10mm}body{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:'Noto Sans KR',sans-serif;background:white}.a4-page{width:210mm;min-height:297mm;padding:10mm 15mm;margin:0 auto;page-break-after:always;box-sizing:border-box;display:flex;flex-direction:column}.a4-page:last-child{page-break-after:auto}.executive-cover{background:linear-gradient(135deg,#002c5f 0%,#001a38 100%)!important;color:white!important;-webkit-print-color-adjust:exact}.report-header{border-bottom:3px solid #002c5f;padding-bottom:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}.executive-section{margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #e2e8f0}.executive-summary-box{background:#f1f5f9!important;border-left:5px solid #002c5f!important;padding:15px 20px;border-radius:8px;font-size:1rem;line-height:1.7;color:#334155;text-align:justify;margin-bottom:20px;font-weight:500}.score-card{background:#f8fafc!important;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center}.score-card.highlight-card{background-color:#002c5f!important;border-color:#002c5f!important;color:white!important}.score-card.highlight-card .label{color:#bfdbfe!important}.score-card.highlight-card .value{color:#ffffff!important}.label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;font-weight:700;margin-bottom:4px}.value{font-size:1.6rem;font-weight:900;color:#002c5f;line-height:1.2;font-family:'Noto Sans KR',sans-serif;word-break:keep-all}.section-title{font-size:1.2rem;font-weight:900;color:#002c5f;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}.chart-wrapper{position:relative;width:100%}canvas{display:none!important}.printed-chart-img{width:100%;height:100%;object-fit:contain;display:block}.grade-badge{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-weight:900;font-size:0.8rem;color:white;font-family:'Roboto',sans-serif}.grade-S{background-color:#4f46e5!important}.grade-A{background-color:#3b82f6!important}.grade-B{background-color:#10b981!important}.grade-C{background-color:#f59e0b!important}.grade-D{background-color:#ef4444!important}.text-blue-600{color:#2563eb!important}.text-orange-500{color:#f97316!important}.text-red-500{color:#ef4444!important}.no-print{display:none!important}table{width:100%;border-collapse:collapse}th,td{padding:4px 8px;border-bottom:1px solid #e2e8f0}thead th{background-color:#f8fafc!important;border-bottom:2px solid #e2e8f0}/* Executive Table Print Styles */.exec-table{width:100%;border-collapse:collapse;font-size:10px}.exec-table th{background-color:#f1f5f9!important;color:#475569!important;font-weight:800;text-align:center;padding:4px;border:1px solid #cbd5e1}.exec-table td{border:1px solid #e2e8f0;padding:4px;vertical-align:middle;color:#334155;word-break:keep-all}.exec-table tr:nth-child(even){background-color:#f8fafc!important}</style></head><body>${content}<script>const noPrint=document.querySelectorAll('.no-print');noPrint.forEach(e=>e.remove());const gCvs=document.getElementById('execGradeChart');if(gCvs&&'${gUrl}'){const i=document.createElement('img');i.src='${gUrl}';i.className='printed-chart-img';gCvs.parentNode.appendChild(i);gCvs.remove()}const fCvs=document.getElementById('execFactorChart');if(fCvs&&'${fUrl}'){const i=document.createElement('img');i.src='${fUrl}';i.className='printed-chart-img';fCvs.parentNode.appendChild(i);fCvs.remove()}setTimeout(()=>{window.print();window.close()},800);<\/script></body></html>`);w.document.close()};
+/* ==========================================================================
+   [1] 개별 심층 분석 보고서 인쇄 함수
+   (수정사항: 세부 점수표 여백 2px로 초슬림화 + 레이아웃 최적화)
+   ========================================================================== */
+window.printReportContent = function() {
+    // 1. 차트 고화질 이미지 변환
+    const canvas = document.getElementById('mainChart');
+    let imgUrl = '';
+    if (canvas) {
+        imgUrl = canvas.toDataURL("image/png", 1.0);
+    }
 
+    // 2. HTML 내용 가져오기
+    let content = document.getElementById('report-content-wrapper').innerHTML;
+
+    // 3. 차트 태그 교체
+    if (imgUrl) {
+        const canvasRegex = /<canvas id="mainChart"[^>]*><\/canvas>/i;
+        const imgTag = `<img src="${imgUrl}" style="width:100%; max-width:600px; height:auto; display:block; margin: 0 auto 20px auto;">`;
+        content = content.replace(canvasRegex, imgTag);
+    }
+
+    // 4. 인쇄 창 열기
+    const w = window.open('', '_blank', 'width=1100,height=1000');
+    if (!w) return window.showModal('팝업 차단을 해제해주세요.');
+
+    w.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>인성검사 리포트 인쇄</title>
+            <script src="https://cdn.tailwindcss.com/3.4.1"><\/script>
+            <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+            <style>
+                /* [공통] A4 용지 여백 15mm 확보 */
+                @page { size: A4 portrait; margin: 15mm; }
+
+                body {
+                    margin: 0; padding: 0;
+                    background-color: white;
+                    font-family: 'Noto Sans KR', sans-serif;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+                .a4-page {
+                    width: 100%;
+                    min-height: auto; 
+                    padding: 0; 
+                    margin: 0 auto;
+                    background: white;
+                    display: block; 
+                    page-break-after: always;
+                }
+                .a4-page:last-child { page-break-after: auto; }
+
+                /* [기본 표 스타일] */
+                table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                thead { display: table-header-group; }
+                tr { page-break-inside: avoid; }
+                th, td { 
+                    border: 1px solid #cbd5e1; padding: 8px; 
+                    text-align: center; vertical-align: middle; font-size: 9pt;
+                }
+                th { background-color: #f1f5f9 !important; color: #002c5f !important; font-weight: 800; }
+
+                /* [수정됨 - 핵심] 세부 점수 표(.score-table) 초슬림 스타일 */
+                .score-table {
+                    border-collapse: separate !important;
+                    border-spacing: 0 2px !important; /* 행 간격도 2px로 좁힘 */
+                    margin-bottom: 0 !important;
+                }
+                .score-table td {
+                    border: none !important;
+                    border-top: 1px solid #f1f5f9 !important;
+                    border-bottom: 1px solid #f1f5f9 !important;
+                    padding: 2px 4px !important; /* [요청사항] 여백 2px로 축소 */
+                    font-size: 8pt !important;   /* 글자 크기도 살짝 줄여서 균형 맞춤 */
+                    height: auto !important;
+                }
+                .score-table td:first-child {
+                    border-left: 1px solid #f1f5f9 !important;
+                    border-top-left-radius: 4px;
+                    border-bottom-left-radius: 4px;
+                }
+                .score-table td:last-child {
+                    border-right: 1px solid #f1f5f9 !important;
+                    border-top-right-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                }
+                /* 등급 뱃지 크기 최적화 */
+                .score-table .grade-badge {
+                    width: 16px !important; height: 16px !important;
+                    line-height: 16px !important; font-size: 0.7rem !important;
+                }
+
+                /* [AI 리포트 스타일] */
+                .ai-markdown { font-size: 10pt; line-height: 1.6; color: #1e293b; text-align: justify; }
+                .ai-markdown h2 { font-size: 1.3rem; font-weight: 900; color: #002c5f; margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid #002c5f; padding-bottom: 5px; page-break-after: avoid; }
+                .ai-markdown h3 { font-size: 1.1rem; font-weight: 800; color: #334155; margin-top: 15px; margin-bottom: 8px; border-left: 4px solid #3b82f6; padding-left: 10px; page-break-after: avoid; }
+                
+                .ai-markdown table { table-layout: fixed; border: 2px solid #94a3b8; border-collapse: collapse !important; }
+                .ai-markdown th { background-color: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 6px; }
+                .ai-markdown td { text-align: left; padding: 6px 10px; border: 1px solid #cbd5e1; }
+                .ai-markdown table th:first-child, .ai-markdown table td:first-child { width: 20%; background-color: #f1f5f9; text-align: center; font-weight: bold; }
+
+                /* 기타 스타일 */
+                .report-header { border-bottom: 3px solid #002c5f; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+                .section-title { font-size: 1.2rem; font-weight: 900; color: #002c5f; display: flex; align-items: center; gap: 8px; margin-top: 20px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; page-break-after: avoid; }
+                .score-card { background: #f8fafc !important; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; text-align: center; }
+                .score-card.highlight-card { background-color: #002c5f !important; border-color: #002c5f !important; }
+                .score-card.highlight-card .label { color: #bfdbfe !important; }
+                .score-card.highlight-card .value { color: #ffffff !important; }
+                .label { font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+                .value { font-size: 1.6rem; font-weight: 900; color: #002c5f; }
+                .grade-badge { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; font-weight: 900; font-size: 0.8rem; color: white; }
+                .grade-S { background-color: #4f46e5 !important; } .grade-A { background-color: #3b82f6 !important; } .grade-B { background-color: #10b981 !important; } .grade-C { background-color: #f59e0b !important; } .grade-D { background-color: #ef4444 !important; }
+                .no-print { display: none !important; }
+                
+                @media print {
+                    body { background: white; }
+                    .a4-page { box-shadow: none; margin: 0; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="a4-page">
+                ${content}
+            </div>
+            <script>
+                window.onload = function() { setTimeout(function() { window.print(); }, 800); };
+            <\/script>
+        </body>
+        </html>
+    `);
+    w.document.close();
+};
+
+/* ==========================================================================
+   [2] 총괄 보고서 인쇄 함수
+   (수정사항: 표지 꽉 채움 + 차트 겹침 해결 + 2페이지 여백 확보)
+   ========================================================================== */
+window.printExecutiveReport = function() {
+    const gradeCanvas = document.getElementById('execGradeChart');
+    const factorCanvas = document.getElementById('execFactorChart');
+    
+    let gradeImgUrl = gradeCanvas ? gradeCanvas.toDataURL("image/png", 1.0) : '';
+    let factorImgUrl = factorCanvas ? factorCanvas.toDataURL("image/png", 1.0) : '';
+
+    let content = document.getElementById('report-content-wrapper').innerHTML;
+
+    if (gradeImgUrl) {
+        content = content.replace(/<canvas id="execGradeChart"[^>]*><\/canvas>/i, 
+            `<img src="${gradeImgUrl}" style="width:100%; height:100%; object-fit:contain; display:block;">`);
+    }
+    if (factorImgUrl) {
+        content = content.replace(/<canvas id="execFactorChart"[^>]*><\/canvas>/i, 
+            `<img src="${factorImgUrl}" style="width:100%; height:100%; object-fit:contain; display:block;">`);
+    }
+
+    const w = window.open('', '_blank', 'width=1100,height=1000');
+    if (!w) return window.showModal('팝업 차단을 해제해주세요.');
+
+    w.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>총괄 보고서 인쇄</title>
+            <script src="https://cdn.tailwindcss.com/3.4.1"><\/script>
+            <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+            <style>
+                @page { size: A4 portrait; margin: 15mm; }
+                
+                body {
+                    margin: 0; padding: 0;
+                    background-color: white;
+                    font-family: 'Noto Sans KR', sans-serif;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+                /* [표지] 여백 무시하고 꽉 채우기 */
+                .executive-cover {
+                    margin: -15mm -15mm 0 -15mm !important; 
+                    width: 210mm !important;
+                    height: 297mm !important;
+                    background: linear-gradient(135deg, #002c5f 0%, #001a38 100%) !important;
+                    color: white !important;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                    overflow: hidden !important;
+                    page-break-after: always;
+                }
+
+                /* [내용 페이지] */
+                .a4-page {
+                    width: 100%;
+                    min-height: auto; 
+                    padding: 0; 
+                    margin: 0 auto;
+                    background: white;
+                    display: block; 
+                }
+
+                /* [요약 페이지] 높이 확보 및 정렬 분산 */
+                .summary-page {
+                    page-break-after: always;
+                    height: 260mm; /* 내용물 겹침 방지를 위해 높이 확보 */
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between; 
+                }
+
+                /* [차트 레이아웃] 높이 자동 조절로 겹침 방지 */
+                .grid-cols-2 { 
+                    display: grid; 
+                    grid-template-columns: repeat(2, minmax(0, 1fr)); 
+                    gap: 1.5rem; 
+                    height: auto !important; /* 높이 해제 */
+                    margin-bottom: 20px;
+                }
+
+                /* [차트 그림] 크기 확보 */
+                .chart-wrapper { 
+                    position: relative; 
+                    width: 100%; 
+                    height: 220px !important; 
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: center; 
+                }
+
+                /* 테이블 스타일 */
+                table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-bottom: 10px; }
+                thead { display: table-header-group; }
+                tr { page-break-inside: avoid; }
+                th { background-color: #f1f5f9 !important; color: #475569 !important; font-weight: 800; text-align: center; padding: 6px 4px; border: 1px solid #cbd5e1; }
+                td { border: 1px solid #e2e8f0; padding: 5px 4px; vertical-align: middle; color: #334155; word-break: keep-all; }
+
+                /* 기타 스타일 */
+                .report-header { border-bottom: 3px solid #002c5f; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+                .section-title { font-size: 1.1rem; font-weight: 900; color: #002c5f; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; }
+                .executive-summary-box { background: #f1f5f9 !important; border-left: 5px solid #002c5f !important; padding: 15px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6; color: #334155; text-align: justify; margin-bottom: 20px; }
+                .score-card { background: #f8fafc !important; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; text-align: center; }
+                .score-card.highlight-card { background-color: #002c5f !important; border-color: #002c5f !important; }
+                .score-card.highlight-card .label { color: #bfdbfe !important; }
+                .score-card.highlight-card .value { color: #ffffff !important; }
+                .label { font-size: 0.7rem; font-weight: 700; color: #64748b; margin-bottom: 2px; }
+                .value { font-size: 1.2rem; font-weight: 900; color: #002c5f; }
+                
+                .grade-badge { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; font-weight: 900; font-size: 0.75rem; color: white; }
+                .grade-S { background-color: #4f46e5 !important; } .grade-A { background-color: #3b82f6 !important; } .grade-B { background-color: #10b981 !important; } .grade-C { background-color: #f59e0b !important; } .grade-D { background-color: #ef4444 !important; }
+                .no-print { display: none !important; }
+                
+                @media print {
+                    body { background: white; }
+                    .executive-cover { margin: -15mm -15mm 0 -15mm !important; }
+                }
+            </style>
+        </head>
+        <body>
+            <div style="width:100%;">
+                ${content}
+            </div>
+
+            <script>
+                window.onload = function() {
+                    const pages = document.querySelectorAll('.a4-page');
+                    if(pages.length >= 2) {
+                        pages[1].classList.add('summary-page');
+                    }
+                    setTimeout(function() { window.print(); }, 800);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+    w.document.close();
+};
 document.addEventListener('DOMContentLoaded',()=>{updateStoredCount();const ua=navigator.userAgent.toLowerCase();if(/kakaotalk|line|instagram|fbav/i.test(ua)){if(/android/i.test(ua))location.href='intent://'+location.href.replace(/https?:\/\//i,'')+'#Intent;scheme=http;package=com.android.chrome;end';document.getElementById('kakaotalk-guide').style.display='flex'}});</script></body></html>
