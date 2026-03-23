@@ -536,7 +536,6 @@ body{font-family:'Noto Sans KR',sans-serif;user-select:none;-webkit-tap-highligh
 </div>
 
 <script>
-// --- LOGIC REMAINS EXACTLY THE SAME ---
 window.updateReportScale=function(){const reportWrapper=document.getElementById('report-content-wrapper');if(!reportWrapper)return;const a4=reportWrapper.querySelector('.a4-page');if(!a4)return;const containerWidth=window.innerWidth-40;const a4Width=794;if(containerWidth<a4Width){const scale=containerWidth/a4Width;reportWrapper.style.transform=`scale(${scale})`;reportWrapper.style.marginBottom=`-${(1-scale)*1123}px`;}else{reportWrapper.style.transform='none';reportWrapper.style.marginBottom='0';}};
 window.closeReport=function(){document.getElementById('view-report').classList.remove('active');document.getElementById('view-report').classList.add('hidden')};
 window.showConfirm=function(m,c){document.getElementById('confirm-message').textContent=m;deleteCallback=c;document.getElementById('confirm-modal').classList.remove('hidden')};
@@ -544,13 +543,10 @@ window.showConfirm=function(m,c){document.getElementById('confirm-message').text
 window.parseDateStrict = function(v) {
     if (!v) return new Date();
     let s = String(v).trim();
-    // YYYY.MM.DD 형식 안전한 파싱
     let m = s.match(/^(\d{4})[./-](\d{1,2})[./-](\d{1,2})/);
     if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
-    // DD.MM.YYYY 형식 지원
     m = s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})/);
     if (m) return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2]));
-    // 엑셀 고유 일련번호(예: 45000) 지원
     if (/^\d{5}(\.\d+)?$/.test(s)) {
         const serial = parseFloat(s);
         const excelEpoch = new Date(1899, 11, 30);
@@ -575,7 +571,6 @@ function generateReportComment(d) {
     const diag = d.diagnosis || {};
     let comments = [];
     
-    // 기본 등급 코드 추출 (예: '보통 (B1)' -> 'B1')
     let baseCode = 'B1';
     if(d.decision.includes('(')) baseCode = d.decision.match(/\(([^)]+)\)/)[1];
     else baseCode = d.decision;
@@ -583,7 +578,6 @@ function generateReportComment(d) {
     if (baseCode === 'C') baseCode = (d.total < 50) ? 'C2' : 'C1';
     else if (baseCode === 'B') baseCode = (d.total < 66) ? 'B2' : 'B1';
 
-    // 1. 종합 등급에 따른 메인 평가 (문맥의 기준점)
     let mainDesc = "";
     if (baseCode === 'S') mainDesc = "조직 적응력과 직무 수행 역량이 매우 탁월한 최상위 인재군입니다.";
     else if (baseCode === 'A') mainDesc = "대부분의 역량이 우수하며, 조직 생활에 긍정적인 영향을 미칠 것으로 기대됩니다.";
@@ -595,14 +589,12 @@ function generateReportComment(d) {
 
     comments.push(mainDesc);
 
-    // 세부 역량 점수 정렬
     const sortedKeys = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const topKey = sortedKeys[0];
     const topScore = scores[topKey];
     const weakKey = sortedKeys[sortedKeys.length - 1];
     const weakScore = scores[weakKey];
 
-    // 역량명 한글 매핑 함수
     const getStrength = (k) => {
         if (k.startsWith('S')) return "안전 수칙 준수 의지";
         if (k.startsWith('C')) return "근태 및 책임감";
@@ -613,9 +605,7 @@ function generateReportComment(d) {
         return "기본 역량";
     };
 
-    // 2. 등급별 정합성에 맞춘 세부 코멘트 분기 처리
     if (['S', 'A', 'B1'].includes(baseCode)) {
-        // 상위 그룹: 장점 극찬 + 약점 부드러운 조언
         if (topScore >= 80) {
             comments.push(`특히 <strong>${getStrength(topKey)}</strong>이(가) 두드러지게 우수하여, 현장에서 긍정적인 역할을 할 것으로 보입니다.`);
         }
@@ -626,7 +616,6 @@ function generateReportComment(d) {
         }
     } 
     else if (['B2', 'C1'].includes(baseCode)) {
-        // 중위 그룹: 약점 우선 지적 + 장점 조건부 인정
         if (diag.sFail) {
              comments.push("<br><br>🚨 <strong class='text-red-600'>[안전 경고]</strong> 무엇보다 안전 관련 역량 점수가 낮아 위험 요인이 존재합니다. 투입 전 확실한 안전 확보 조치가 필요합니다.");
         } else if (weakScore < 50) {
@@ -637,7 +626,6 @@ function generateReportComment(d) {
         }
     } 
     else {
-        // 하위 그룹(C2, D): 장점 무시 + 치명적 위험성 경고 위주
         if (diag.sFail) {
              comments.push("<br><br>🚨 <strong class='text-red-600'>[치명적 위험]</strong> 현장 안전수칙에 대한 기본 인식이 심각하게 결여되어 있어, 대형 사고 유발 가능성이 큽니다.");
         }
@@ -705,7 +693,7 @@ function calculateAll(name, map) {
 
 async function generateAIAnalysis(d) {
     const btn = document.getElementById('btn-ai-generate'); const con = document.getElementById('ai-result-container'); if (!btn || !con) return;
-    btn.innerHTML = '✨ AI 분석 중... (약 10초)'; btn.disabled = true; btn.classList.add('opacity-50');
+    btn.innerHTML = '✨ AI 분석 중... (약 15~20초)'; btn.disabled = true; btn.classList.add('opacity-50');
     try {
         let sRes = "";
         if (d.answers) {
@@ -716,38 +704,66 @@ async function generateAIAnalysis(d) {
             });
             if (items.length > 0) sRes = "\n[주요 응답 패턴 (1점/5점 문항)]\n" + items.join("\n");
         }
-        const prompt = `당신은 HD현대삼호의 최고 수준 외국인 인력 채용 전문가이자 인사 평가관입니다.
-제공된 후보자의 인성검사 결과 데이터와 주요 문항별 응답 내역을 바탕으로 면접관과 현장 관리자가 즉시 활용할 수 있는 '고도화된 심층 분석 보고서'를 작성하십시오.
-후보자는 조선업 E-7-3 용접공, 전기공, 도장공 대상이며, 외국인 현장 생산직 특성을 깊이 고려해야 합니다.
+        
+        // 프롬프트 수정: 전문성을 위해 분석 파트는 줄글 혼용, 액션 플랜은 개조식 사용
+        const prompt = `당신은 HD현대삼호의 외국인 인력(E-7-3 용접, 도장, 전기 등) 전담 채용 전문가이자, 현장 생산 관리자(반장/직장)를 밀착 지원하는 인사 컨설턴트입니다.
+제공된 후보자의 인성검사 12개 하위 역량 데이터와 1점/5점 극단적 응답 패턴을 종합적으로 분석하여, 실제 조선업 현장에 즉시 적용할 수 있는 '생산 현장 맞춤형 심층 분석 보고서'를 작성하십시오.
 
-[출력 지침 - 매우 중요]
-자신을 소개하는 문구(예: "HD현대삼호의 채용 전문가로서...")나 인사말, 불필요한 서론을 절대 작성하지 마십시오.
-답변은 즉시 아래 지정된 [필수 구조 및 마크다운 양식]의 내용부터 시작해야 합니다. 문장 어조는 전문가다운 보고서 톤(~함, ~임, ~요망됨)을 유지하십시오.
+[특별 지시: 전문성과 가독성의 조화]
+보고서의 전문적인 무게감을 유지하기 위해 깊이 있는 분석은 '격식 있는 줄글(서술형)'로 작성하고, 관리자가 즉각적으로 확인해야 할 요약 지침이나 액션 플랜은 '개조식(글머리 기호)'을 혼합하여 전문성과 가독성을 모두 확보하십시오.
+불필요한 외국어(영어) 표현을 배제하고 현장 작업자가 이해하기 쉬운 우리말 위주로 작성하십시오.
+중요한 핵심 단어나 수치는 **굵은 글씨** 처리하여 가독성을 높이십시오.
 
-[필수 구조 및 마크다운 양식] - 반드시 아래 양식과 마크다운 문법을 지켜 작성할 것.
+[출력 지침 - 매우 중요!!!]
+- "HD현대삼호의 현장 생산 경쟁력을 책임지는...", "노고에 감사드립니다", "보고서를 제출합니다"와 같은 인사말, 서론, 안내 문구를 **절대** 쓰지 마십시오. 
+- 답변의 첫 글자는 반드시 \`> **[종합 판정 요약]**\` 기호로 곧바로 시작해야 합니다. 어떠한 미사여구도 덧붙이지 마십시오.
+- 아래 지정된 [보고서 양식] 구조를 완벽하게 준수하십시오.
+- 어조는 객관적이고 전문적인 보고서 톤(~함, ~임, ~요망됨, ~판단됨)을 철저히 유지하십시오.
 
-> **[핵심 요약]** 후보자의 종합적인 성향, 적합도, 그리고 현장 투입 시 기대효과를 3~4문장으로 명확하게 요약하십시오.
+[보고서 양식]
 
-### 💡 주요 강점 및 역량 (Strengths)
-* **[역량명1]**: 구체적인 응답 결과(점수)와 문항 내용을 근거로 한 강점 서술
-* **[역량명2]**: 구체적인 응답 결과(점수)와 문항 내용을 근거로 한 강점 서술
+> **[종합 판정 요약]**
+(후보자의 전반적 성향, 현장 적합도, 잠재적 리스크를 종합하여 4~5문장의 전문적이고 짜임새 있는 줄글로 깊이 있게 서술)
 
-### ⚠️ 리스크 및 주의사항 (Risks & Weaknesses)
-* **[주의점1]**: 비교적 낮은 점수나 극단적인 응답 패턴을 바탕으로, 실제 현장 투입 시 발생 가능한 문제점 예측
-* **[주의점2]**: 신뢰도 이슈나 기타 성향적 약점 서술 (없을 시 관리가 필요한 부분으로 대체)
+### 🎯 생산 관리자 핵심 브리핑
+(현장에서 이 직원을 다룰 때 명심해야 할 3가지 핵심 지침. 지침 제목은 개조식으로, 부연 설명은 1~2문장의 간결한 줄글로 작성)
+* **[지침 1 제목]**: (구체적 상황과 이유를 포함한 설명)
+* **[지침 2 제목]**: (구체적 상황과 이유를 포함한 설명)
+* **[지침 3 제목]**: (구체적 상황과 이유를 포함한 설명)
 
-### 🛠️ 현장 배치 및 관리 가이드
-| 관리 지표 | 세부 실행 지침 |
+### 📊 현장 밀착형 다면 평가
+(각 지표마다 조선소 현장에 맞는 구체적인 상황을 가정하여, 2~3문장의 전문적인 줄글로 심도 있게 분석)
+* **[작업 지시 이행 및 성실도 (C1/C2/R1)]**
+  - **강점:** (관련 강점을 줄글로 상세히 서술)
+  - **보완점:** (관련 약점을 줄글로 상세히 서술)
+* **[현장 안전 민감도 (S1/S2)]**
+  - **강점:** (보호구 착용 습관, 위험 인지 및 사고 예방 성향 등)
+  - **보완점:** ...
+* **[팀워크 및 현장 융화력 (T1/T2/A2)]**
+  - **강점:** (한국인 관리자 및 타 국적 동료들과의 화합 능력을 입체적으로 분석)
+  - **보완점:** ...
+* **[스트레스 내성 및 위기 대처 (E1/E2/A1)]**
+  - **강점:** (고강도 육체 노동, 납기 압박 시의 감정 통제력 등)
+  - **보완점:** ...
+
+### ⚠️ 잠재 리스크 및 발현 조건
+(특정 위험 상황을 눈에 띄게 정리하되, 상황 묘사는 구체적인 줄글로 작성)
+* **[리스크 1: 명칭]**
+  - **발현 조건:** (어떤 특정 현장 상황에서 갈등이나 사고로 이어지는지 2문장 내외의 줄글로 상세 묘사)
+  - **선제적 대처법:** (관리자의 즉각적이고 구체적인 대응 방안)
+* **[리스크 2: 명칭]**
+  - **발현 조건:** ...
+  - **선제적 대처법:** ...
+
+### 🛠️ 맞춤형 현장 배치 및 실행 계획
+| 관리 지표 | 생산 관리자(반장) 관점의 구체적 실행 지침 (개조식 명사형 종결 권장) |
 |:---:|:---|
-| **초기 배치** | 현장 배치 시 가장 적합한 직무 환경이나 팀 구성 조언 |
-| **밀착 관리** | 직속 관리자(반장/직장)가 특별히 주의를 기울여야 할 멘토링/관리 포인트 |
-| **안전/교육** | 안전 및 직무 교육 시 해당 인원에게 강조해야 할 맞춤형 메시지 |
-*(반드시 위 형태의 마크다운 표를 유지할 것)*
-
-### 🎤 면접 심층 검증 질문 (Top 3)
-1. **[질문 내용]** (검증 의도: ~을 확인하기 위함)
-2. **[질문 내용]** (검증 의도: ~을 확인하기 위함)
-3. **[질문 내용]** (검증 의도: ~을 확인하기 위함)
+| **최적 직무/배치** | - (조건 1)<br>- (조건 2) |
+| **효과적 소통/지시** | - (소통법 1)<br>- (소통법 2) |
+| **리스크 통제 방안** | - (체크리스트 1)<br>- (체크리스트 2) |
+| **동기부여 및 근태** | - (보상/동기부여 방식 1)<br>- (근태 관리법) |
+| **추천 멘토(사수)** | - (최적의 사수 성향)<br>- (매칭 이유) |
+| **장기 육성 방향** | - (6개월 뒤 기대 역할)<br>- (1년 뒤 잠재력) |
 
 후보자 정보: ${d.name} (${d.id}), 점수: ${d.total}, 종합등급: ${d.decision}, 신뢰도: ${d.reliability}.
 세부역량: 근태/시간(C1):${d.details.C1}, 책임감(C2):${d.details.C2}, 규정준수(R1):${d.details.R1}, 정직성(R2):${d.details.R2}, 협력태도(T1):${d.details.T1}, 갈등관리(T2):${d.details.T2}, 감정조절(E1):${d.details.E1}, 인내심(E2):${d.details.E2}, 안전수칙(S1):${d.details.S1}, 위험인지(S2):${d.details.S2}, 학습능력(A1):${d.details.A1}, 조직적응(A2):${d.details.A2}.
@@ -756,12 +772,13 @@ ${sRes}`;
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
         const data = await res.json();
         if (!data.candidates || !data.candidates[0]) { throw new Error(data.error?.message || "API 응답 오류"); }
-        con.innerHTML = `<div class="a4-page ai-report-page" style="margin-top:20px;height:auto!important;min-height:297mm;overflow:visible!important;"><div class="report-header"><div><img src="hd_logo.png" style="height:32px;margin-bottom:4px;" onerror="this.style.display='none'"><div class="text-3xl font-black text-[#002c5f] font-eng uppercase">인성검사 심층 분석 보고서</div></div><div class="text-right"><div class="text-xs text-gray-400 font-bold uppercase tracking-widest">Confidential Report</div><div class="text-lg font-black text-gray-800 font-kor">${d.name} <span class="text-base text-gray-500 font-bold">(${d.id})</span></div><div class="text-lg font-bold text-gray-500 font-eng mt-1">${window.formatDate(d.date||new Date(), false)}</div></div></div><div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 ai-markdown flex-grow">${marked.parse(data.candidates[0].content.parts[0].text)}</div><div class="mt-4 pt-4 border-t border-gray-100 text-center text-[10px] text-gray-300 font-black uppercase tracking-[0.4em]">HD HYUNDAI SAMHO </div></div>`;
+        
+        con.innerHTML = `<div class="a4-page ai-report-page" style="margin-top:20px;height:auto!important;min-height:297mm;overflow:visible!important;"><div class="report-header gap-4"><div class="flex-1"><img src="hd_logo.png" style="height:32px;margin-bottom:4px;" onerror="this.style.display='none'"><div class="text-2xl md:text-3xl font-black text-[#002c5f] font-kor leading-tight tracking-tighter break-keep">인성검사 심층 분석 보고서</div></div><div class="text-right flex flex-col items-end justify-end max-w-[50%]"><div class="text-[10px] text-white bg-[#002c5f] px-2 py-0.5 rounded font-bold uppercase inline-block mb-1 font-kor">공식 문서</div><div class="text-lg font-black text-gray-800 font-kor break-keep text-right leading-snug">${d.name}</div><div class="text-sm text-gray-500 font-bold mt-0.5">(${d.id})</div><div class="text-sm font-bold text-gray-400 font-eng mt-1">${window.formatDate(d.date||new Date(), false)}</div></div></div><div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 ai-markdown flex-grow">${marked.parse(data.candidates[0].content.parts[0].text)}</div><div class="mt-4 pt-4 border-t border-gray-100 text-center text-[10px] text-gray-300 font-black tracking-[0.2em] font-kor">HD현대삼호 인사 보고서 </div></div>`;
         btn.style.display = 'none'; updateReportScale(); 
     } catch (e) { console.error(e); btn.innerHTML = '생성 실패 (재시도)'; btn.disabled = false; btn.classList.remove('opacity-50'); }
 }
 
-var GUIDE_TEXTS={kr:{title:"SYSTEM GUIDE",timeLabel:"TIME_LIMIT",timeVal:"30:00",countLabel:"DATA_POINTS",countVal:"94",warnLabel:"CRITICAL_WARNING",warnVal:"솔직하게 답변하세요.<br>답변이 일관되지 않으면 불합격 처리될 수 있습니다.",btn:"START SYSTEM"},vn:{title:"HƯỚNG DẪN HỆ THỐNG",timeLabel:"THỜI GIAN",timeVal:"30:00",countLabel:"CÂU HỎI",countVal:"94",warnLabel:"CẢNH BÁO",warnVal:"Hãy trả lời trung thực.<br>Nếu câu trả lời không nhất quán, bạn có thể bị trượt.",btn:"START SYSTEM"},id:{title:"PANDUAN SISTEM",timeLabel:"WAKTU",timeVal:"30:00",countLabel:"PERTANYAAN",countVal:"94",warnLabel:"PERINGATAN",warnVal:"Jawablah dengan jujur.<br>Jika jawaban tidak konsisten, Anda mungkin gagal.",btn:"START SYSTEM"},en:{title:"SYSTEM GUIDE",timeLabel:"TIME_LIMIT",timeVal:"30:00",countLabel:"DATA_POINTS",countVal:"94",warnLabel:"CRITICAL_WARNING",warnVal:"Please answer honestly.<br>Inconsistent answers may result in failure.",btn:"START SYSTEM"}};
+var GUIDE_TEXTS={kr:{title:"SYSTEM GUIDE",timeLabel:"TIME_LIMIT",timeVal:"30:00",countLabel:"DATA_POINTS",countVal:"94",warnLabel:"CRITICAL_WARNING",warnVal:"솔직하게 답변하세요.<br>답변이 일관되지 않으면 불합격 처리될 수 있습니다.",btn:"START SYSTEM"},vn:{title:"HƯỚNG DẪN HỆ THỐNG",timeLabel:"THỜI GIAN",timeVal:"30:00",countLabel:"CÂU HỎI",countVal:"94",warnLabel:"CẢNH BÁO",warnVal:"Hãy trả lời trung thực.<br>Nếu câu trả lời không nhất quán, bạn có thể bị trượt.",btn:"START SYSTEM"},id:{title:"PANDUAN SISTEM",timeLabel:"WAKTU",timeVal:"30:00",countLabel:"PERTANYAAN",countVal:"94",warnLabel:"PERINGATAN",warnVal:"Jawablah với jujur.<br>Nếu câu trả lời không nhất quán, bạn có thể bị trượt.",btn:"START SYSTEM"},en:{title:"SYSTEM GUIDE",timeLabel:"TIME_LIMIT",timeVal:"30:00",countLabel:"DATA_POINTS",countVal:"94",warnLabel:"CRITICAL_WARNING",warnVal:"Please answer honestly.<br>Inconsistent answers may result in failure.",btn:"START SYSTEM"}};
 
 var QUESTIONS_FULL = [
   {id:1,type:'C1',rev:false,kr:"나는 작업 시작 시간보다 일찍 도착해서 준비한다.",en:"I arrive earlier than the start time to prepare for work.",vn:"Tôi luôn đến sớm hơn giờ làm việc để chuẩn bị.",ind:"Saya selalu datang lebih awal dari jam kerja untuk bersiap-siap."},
@@ -857,7 +874,8 @@ var QUESTIONS_FULL = [
   {id:91,type:'REL',rev:true,kr:"나와 성격이 안 맞는 사람과 일하는 것은 불편하다.",en:"It is uncomfortable to work with someone who doesn't match my personality.",vn:"Làm việc với người không hợp tính cách khiến tôi thấy khó chịu.",ind:"Bekerja dengan orang yang tidak cocok sifatnya membuat saya tidak nyaman."},
   {id:92,type:'REL',rev:true,kr:"내 실수를 인정하는 것이 마음 불편할 때가 있다.",en:"Admitting my mistakes is sometimes uncomfortable.",vn:"Đôi khi việc thừa nhận lỗi sai khiến tôi thấy bối rối.",ind:"Terkadang saya merasa berat untuk mengakui kesalahan saya."},
   {id:93,type:'REL',rev:false,kr:"나는 하루 종일 일해도 전혀 피곤하지 않다.",en:"I am not tired at all even if I work all day.",vn:"Tôi không thấy mệt mỏi chút nào dù có làm việc cả ngày.",ind:"Saya sama sekali tidak merasa lelah meskipun bekerja seharian penuh."},
-  {id:94,type:'REL',rev:false,kr:"일이 아무리 힘들어도 스트레스를 전혀 받지 않는다.",en:"I don't get stressed at all no matter how hard the work is.",vn:"Dù việc vất vả đến mấy, tôi cũng không hề bị 압력.",ind:"Saya tidak merasa stres sama sekali seberat apa pun pekerjaannya."}];
+  {id:94,type:'REL',rev:false,kr:"일이 아무리 힘들어도 스트레스를 전혀 받지 않는다.",en:"I don't get stressed at all no matter how hard the work is.",vn:"Dù việc vất vả đến mấy, tôi cũng không hề bị 압력.",ind:"Saya tidak merasa stres sama sekali seberat apa pun pekerjaannya."}
+];
 
 var MGMT_GUIDE={'C1':{title:"근태·시간",desc:"시간 엄수"},'C2':{title:"책임감",desc:"품질·완수"},'R1':{title:"규정 준수",desc:"규칙 이행"},'R2':{title:"정직성",desc:"투명한 보고"},'T1':{title:"협력 태도",desc:"팀워크"},'T2':{title:"갈등 관리",desc:"대인 관계"},'E1':{title:"감정 조절",desc:"평정심"},'E2':{title:"인내심",desc:"스트레스 관리"},'S1':{title:"안전 수칙",desc:"보호구 착용"},'S2':{title:"위험 인지",desc:"사전 예방"},'A1':{title:"학습 능력",desc:"업무 습득"},'A2':{title:"조직 적응",desc:"관계·문화"}};
 let currentLang='',currentQIndex=0,userAnswers={},candidateData={};let timerInterval=null,remainingTime=1800,chartInstance=null;let globalLocalData=[],globalFileData=[],globalSheetData=[],currentSearch="",currentFilter="ALL";let currentDateFilter="";let sortKey='date',sortOrder='desc';let currentViewingData=null;const LOCAL_DB_KEY='HD_E7_FINAL_V30';let isNavigating=false;let deleteCallback=null;let shuffledIndices=[]; 
@@ -910,7 +928,7 @@ window.syncWithGoogleSheet = async function(isManual = false) {
                 }
             }
 
-            // 2. 세부 점수 파싱
+            // 2. 세부 점 파싱
             let det = {};
             let isDetValid = true;
             const detMap = { 
@@ -1286,18 +1304,18 @@ window.generateExecutiveReport=function(){
                 <img src="hd_logo.png" style="height:40px;filter:brightness(0) invert(1);" onerror="this.style.display='none'">
             </div>
             <div>
-                <div style="font-size:1.5rem;font-weight:700;margin-bottom:20px;opacity:0.8;letter-spacing:0.2em;">CONFIDENTIAL</div>
+                <div style="font-size:1.5rem;font-weight:700;margin-bottom:20px;opacity:0.8;letter-spacing:0.2em;font-family:'Noto Sans KR', sans-serif;">대외비</div>
                 <div style="font-size:3.5rem;font-weight:900;line-height:1.2;margin-bottom:40px;text-shadow:0 10px 30px rgba(0,0,0,0.3);">E-7 외국인 근로자<br><span style="color:#60a5fa">인성검사 총괄 보고서</span></div>
                 <div style="font-size:1.5rem;font-weight:500;border-top:1px solid rgba(255,255,255,0.3);border-bottom:1px solid rgba(255,255,255,0.3);padding:20px 0;display:inline-block;min-width:300px;">${window.formatDate(new Date(), false)}</div>
             </div>
-            <div style="text-align:center;font-size:1rem;opacity:0.7;font-weight:300;">HD HYUNDAI SAMHO<br>Human Resources Development Team</div>
+            <div style="text-align:center;font-size:1rem;opacity:0.7;font-weight:300;">HD현대삼호<br>인사지원 및 현장관리 부서</div>
         </div>
     </div>
     <div class="a4-page">
         <div class="report-header">
             <div>
-                <div class="text-3xl font-black text-[#002c5f] font-eng uppercase">Executive Summary</div>
-                <div class="text-sm font-black text-gray-400 mt-1 uppercase tracking-widest font-kor">종합 분석 및 현황</div>
+                <div class="text-3xl font-black text-[#002c5f] font-kor">종합 분석 요약</div>
+                <div class="text-sm font-black text-gray-400 mt-1 tracking-widest font-kor">전체 대상자 판정 현황</div>
             </div>
             <div class="text-right"><div class="text-lg font-black text-gray-800 font-kor">총원: ${totalCnt}명</div><div class="text-sm text-gray-500 font-bold">${window.formatDate(new Date(), false)} 기준</div></div>
         </div>
@@ -1317,7 +1335,7 @@ window.generateExecutiveReport=function(){
                 <div class="chart-wrapper flex-1 relative bg-white rounded-xl p-2 w-full flex items-center justify-center"><canvas id="execGradeChart"></canvas></div>
             </div>
             <div class="flex flex-col h-full">
-                <div class="section-title" style="font-size:1.1rem; margin-bottom:4px;"><span>📈</span> 6대 핵심 역량 (Radar)</div>
+                <div class="section-title" style="font-size:1.1rem; margin-bottom:4px;"><span>📈</span> 6대 핵심 역량 (방사형)</div>
                 <div class="chart-wrapper flex-1 relative bg-white rounded-xl p-2 w-full flex items-center justify-center"><canvas id="execFactorChart"></canvas></div>
             </div>
         </div>
@@ -1344,11 +1362,11 @@ window.generateExecutiveReport=function(){
                 </table>
             </div>
         </div>
-        <div class="pt-2 text-center text-[10px] text-gray-300 font-black uppercase tracking-widest">HD HYUNDAI SAMHO - HR REPORT</div>
+        <div class="pt-2 text-center text-[10px] text-gray-300 font-black tracking-[0.2em] font-kor">HD현대삼호 인사 보고서</div>
     </div>
     <div class="a4-page">
         <div class="report-header">
-            <div><div class="text-2xl font-black text-[#002c5f] font-eng uppercase">Detailed List</div><div class="text-sm font-black text-gray-400 mt-1 uppercase tracking-widest font-kor">주요 대상자 세부 내역</div></div>
+            <div><div class="text-2xl font-black text-[#002c5f] font-kor">세부 대상자 명단</div><div class="text-sm font-black text-gray-400 mt-1 tracking-widest font-kor">검사 결과 상세 리스트</div></div>
         </div>
         <div class="flex-grow overflow-hidden">
             <table class="w-full text-xs border-collapse">
@@ -1366,7 +1384,7 @@ window.generateExecutiveReport=function(){
                 </tbody>
             </table>
         </div>
-        <div class="mt-4 pt-4 text-center text-xs text-gray-300 font-black uppercase tracking-widest">End of Document</div>
+        <div class="mt-4 pt-4 text-center text-xs text-gray-300 font-black tracking-widest font-kor">[ 보고서 끝 ]</div>
     </div>
     <div class="text-center no-print my-10 pb-20">
         <button onclick="window.printExecutiveReport()" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg mr-4">🖨️ 인쇄 / PDF 저장</button>
@@ -1381,7 +1399,7 @@ window.generateExecutiveReport=function(){
     if(window.updateReportScale) window.updateReportScale();
 };
 
-// 6. 개별 리포트 평균 계산용 중복 제거 로직 반영
+// 6. 개별 리포트 평균 계산용 중복 제거 로직 반영 (레이아웃 개선 동시 적용)
 window.showReport = function(d) {
     currentViewingData = d; const factors = Object.keys(d.details); const stats = {};
     
@@ -1400,7 +1418,8 @@ window.showReport = function(d) {
     const getRelColor = (str) => { if (str.includes('V1') || str.includes('높음')) return '#1e40af'; if (str.includes('V2')) return '#2563eb'; if (str.includes('V3')) return '#d97706'; return '#dc2626'; };
     const getGrade = (s) => { if (s >= 90) return { t: 'S', c: 'grade-S' }; if (s >= 80) return { t: 'A', c: 'grade-A' }; if (s >= 60) return { t: 'B', c: 'grade-B' }; if (s >= 40) return { t: 'C', c: 'grade-C' }; return { t: 'D', c: 'grade-D' }; };
 
-    wrapper.innerHTML = `<div class="a4-page"><div class="report-header"><div><img src="hd_logo.png" class="h-10 mb-2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="text-3xl font-black text-[#002c5f] tracking-tighter uppercase font-eng">HD HYUNDAI SAMHO</div><div class="text-sm font-black text-gray-400 mt-1 uppercase tracking-widest font-kor">E-7 외국인 근로자 인성검사 리포트</div></div><div class="text-right"><div class="text-[10px] text-white bg-[#002c5f] px-2 py-0.5 rounded font-bold uppercase inline-block mb-1">Official Document</div><div class="text-lg font-black text-gray-800 font-kor">${d.name} <span class="text-base text-gray-500 font-bold">(${d.id})</span></div><div class="text-lg font-bold text-gray-500 font-eng mt-1">${window.formatDate(d.date || new Date(), true)}</div></div></div><div class="grid grid-cols-4 gap-4 mb-6"><div class="score-card highlight-card"><div class="label">종합 점수</div><div class="value">${d.total}</div></div><div class="score-card"><div class="label">종합 등급</div><div class="value" style="color:${getGradeColor(d.decision)}">${d.decision.split(' (')[0]}</div></div><div class="score-card"><div class="label">신뢰도</div><div class="value" style="color:${getRelColor(d.reliability)}">${d.reliability.split(' (')[0]}</div></div><div class="score-card"><div class="label">최저 점수</div><div class="value" style="color:#64748b">${d.minScore}</div></div></div><div class="grid grid-cols-2 gap-8 mb-4 min-h-[420px] items-stretch"><div class="flex flex-col h-full"><div class="section-title"><span>📊</span> 역량 비교 프로파일</div><div class="chart-wrapper flex-1 relative bg-white rounded-xl p-2 w-full"><canvas id="mainChart"></canvas></div></div><div class="flex flex-col h-full"><div class="section-title"><span>📝</span> 세부 점수 및 등급</div><div class="flex-1 w-full"><table class="score-table h-full w-full">${Object.keys(d.details).map(k => { const s = d.details[k], g = getGrade(s), c = s >= 80 ? '#1e3a8a' : (s >= 60 ? '#3b82f6' : '#ef4444'); return `<tr><td width="35%"><span class="font-eng text-slate-400 text-[10px] mr-1">${k}</span>${MGMT_GUIDE[k].title}</td><td width="15%" class="text-center"><span class="grade-badge ${g.c}">${g.t}</span></td><td width="35%"><div style="background:#f1f5f9;border-radius:4px;height:8px;overflow:hidden"><div style="width:${s}%;background:${c};height:100%"></div></div></td><td width="15%" style="color:${c};font-weight:800;text-align:center;">${s}</td></tr>` }).join('')}</table></div></div></div><div class="grid grid-cols-2 gap-8 border-t border-transparent pt-6" style="margin-top:0.1cm;"><div class="flex flex-col h-full"><div class="section-title"><span>📌</span> 종합 판정</div><div class="bg-white rounded-xl border border-[#e2e8f0] p-5 flex-grow shadow-sm"><p class="text-[0.95rem] text-slate-700 leading-relaxed text-justify break-keep font-medium">${decDesc}</p></div></div><div class="flex flex-col h-full"><div class="section-title"><span>🔍</span> 신뢰도 분석</div><div class="bg-white rounded-xl border border-[#e2e8f0] p-5 flex-grow shadow-sm"><p class="text-[0.95rem] text-slate-700 leading-relaxed text-justify break-keep font-medium">${relDesc}</p></div></div></div></div><div id="ai-result-container"></div><div class="text-center no-print my-10 pb-20"><button onclick="window.printReportContent()" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg mr-4 transition-all hover:-translate-y-1">🖨️ 인쇄 / PDF 저장</button><button id="btn-ai-generate" onclick="generateAIAnalysis(currentViewingData)" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black py-4 px-8 rounded-xl shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl inline-flex items-center gap-2"><span>✨</span> AI 심층 분석 (Premium)</button><button onclick="window.closeReport()" class="bg-white border hover:bg-gray-50 text-gray-600 px-8 py-4 rounded-xl font-bold ml-4 shadow-sm">닫기</button></div>`;
+    // 일반 리포트 헤더도 동일하게 flex-1 공간 자동 분배 및 단어 단위 줄바꿈(break-keep) 적용, 영어문구 제거
+    wrapper.innerHTML = `<div class="a4-page"><div class="report-header gap-4"><div class="flex-1"><img src="hd_logo.png" class="h-10 mb-2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="text-3xl font-black text-[#002c5f] tracking-tighter uppercase font-eng break-keep">HD HYUNDAI SAMHO</div><div class="text-sm font-black text-gray-400 mt-1 tracking-widest font-kor break-keep">E-7 외국인 근로자 인성검사 리포트</div></div><div class="text-right flex flex-col items-end justify-end max-w-[50%]"><div class="text-[10px] text-white bg-[#002c5f] px-2 py-0.5 rounded font-bold inline-block mb-1 font-kor">공식 문서</div><div class="text-lg font-black text-gray-800 font-kor break-keep text-right leading-snug">${d.name} <span class="text-base text-gray-500 font-bold whitespace-nowrap">(${d.id})</span></div><div class="text-lg font-bold text-gray-500 font-eng mt-1">${window.formatDate(d.date || new Date(), true)}</div></div></div><div class="grid grid-cols-4 gap-4 mb-6"><div class="score-card highlight-card"><div class="label">종합 점수</div><div class="value">${d.total}</div></div><div class="score-card"><div class="label">종합 등급</div><div class="value" style="color:${getGradeColor(d.decision)}">${d.decision.split(' (')[0]}</div></div><div class="score-card"><div class="label">신뢰도</div><div class="value" style="color:${getRelColor(d.reliability)}">${d.reliability.split(' (')[0]}</div></div><div class="score-card"><div class="label">최저 점수</div><div class="value" style="color:#64748b">${d.minScore}</div></div></div><div class="grid grid-cols-2 gap-8 mb-4 min-h-[420px] items-stretch"><div class="flex flex-col h-full"><div class="section-title"><span>📊</span> 역량 비교 프로파일</div><div class="chart-wrapper flex-1 relative bg-white rounded-xl p-2 w-full"><canvas id="mainChart"></canvas></div></div><div class="flex flex-col h-full"><div class="section-title"><span>📝</span> 세부 점수 및 등급</div><div class="flex-1 w-full"><table class="score-table h-full w-full">${Object.keys(d.details).map(k => { const s = d.details[k], g = getGrade(s), c = s >= 80 ? '#1e3a8a' : (s >= 60 ? '#3b82f6' : '#ef4444'); return `<tr><td width="35%"><span class="font-eng text-slate-400 text-[10px] mr-1">${k}</span>${MGMT_GUIDE[k].title}</td><td width="15%" class="text-center"><span class="grade-badge ${g.c}">${g.t}</span></td><td width="35%"><div style="background:#f1f5f9;border-radius:4px;height:8px;overflow:hidden"><div style="width:${s}%;background:${c};height:100%"></div></div></td><td width="15%" style="color:${c};font-weight:800;text-align:center;">${s}</td></tr>` }).join('')}</table></div></div></div><div class="grid grid-cols-2 gap-8 border-t border-transparent pt-6" style="margin-top:0.1cm;"><div class="flex flex-col h-full"><div class="section-title"><span>📌</span> 종합 판정</div><div class="bg-white rounded-xl border border-[#e2e8f0] p-5 flex-grow shadow-sm"><p class="text-[0.95rem] text-slate-700 leading-relaxed text-justify break-keep font-medium">${decDesc}</p></div></div><div class="flex flex-col h-full"><div class="section-title"><span>🔍</span> 신뢰도 분석</div><div class="bg-white rounded-xl border border-[#e2e8f0] p-5 flex-grow shadow-sm"><p class="text-[0.95rem] text-slate-700 leading-relaxed text-justify break-keep font-medium">${relDesc}</p></div></div></div></div><div id="ai-result-container"></div><div class="text-center no-print my-10 pb-20"><button onclick="window.printReportContent()" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg mr-4 transition-all hover:-translate-y-1">🖨️ 인쇄 / PDF 저장</button><button id="btn-ai-generate" onclick="generateAIAnalysis(currentViewingData)" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black py-4 px-8 rounded-xl shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl inline-flex items-center gap-2"><span>✨</span> AI 심층 분석 (Premium)</button><button onclick="window.closeReport()" class="bg-white border hover:bg-gray-50 text-gray-600 px-8 py-4 rounded-xl font-bold ml-4 shadow-sm">닫기</button></div>`;
     
     if (chartInstance) chartInstance.destroy(); Chart.register(ChartDataLabels);
     chartInstance = new Chart(document.getElementById('mainChart').getContext('2d'), { type: 'bar', data: { labels: Object.keys(d.details).map(k => MGMT_GUIDE[k].title), datasets: [{ label: '평균', data: Object.keys(d.details).map(k => stats[k].avg), type: 'line', borderColor: '#ef4444', borderWidth: 3, pointBackgroundColor: '#ef4444', tension: 0.3, order: 0, datalabels: { color: '#ef4444', anchor: 'start', align: 'right', offset: 6, font: { weight: 'bold', size: 13 }, formatter: Math.round } }, { label: '본인', data: Object.values(d.details), backgroundColor: 'rgba(30,58,138,0.9)', borderRadius: 4, barPercentage: 1.0, categoryPercentage: 0.8, order: 1, datalabels: { color: 'white', anchor: 'center', align: 'center', font: { weight: 'bold', size: 13 } } }] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { min: 0, max: 110, grid: { color: '#f1f5f9' }, ticks: { font: { size: 13, weight: 'bold' } } }, y: { grid: { display: false }, ticks: { font: { family: "'Noto Sans KR'", weight: '700', size: 13 } } } }, plugins: { legend: { position: 'top' }, datalabels: { display: true, formatter: Math.round } }, layout: { padding: { right: 30 } } } });
